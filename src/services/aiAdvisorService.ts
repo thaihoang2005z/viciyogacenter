@@ -6,10 +6,10 @@
  */
 
 import { GoogleGenAI, Type } from '@google/genai';
-import { VICI_CARE_SYSTEM_PROMPT, VICI_SYSTEM_PROMPT, getViciConsultation } from '../data/viciAdvisor';
-import { AIConsultationReport } from '../types';
-import { analyzeCustomerSegmentAndSchedule } from '../utils/customerSegmentation';
-import { saveOrUpdateLead } from './leadStorage';
+import { VICI_CARE_SYSTEM_PROMPT, VICI_SYSTEM_PROMPT, getViciConsultation } from '../data/viciAdvisor.js';
+import { AIConsultationReport } from '../types.js';
+import { analyzeCustomerSegmentAndSchedule } from '../utils/customerSegmentation.js';
+import { saveOrUpdateLead } from './leadStorage.js';
 
 let geminiClient: GoogleGenAI | null = null;
 

@@ -7,7 +7,7 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { generateConsultationReport } from '../../src/services/aiAdvisorService';
+import { generateConsultationReport } from '../../src/services/aiAdvisorService.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');

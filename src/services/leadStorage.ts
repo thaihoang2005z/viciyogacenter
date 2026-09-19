@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { Lead } from '../types';
+import { Lead } from '../types.js';
 
 // Initial seeds for sample data
 const defaultSampleLeads: Lead[] = [

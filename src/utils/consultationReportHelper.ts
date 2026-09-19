@@ -6,8 +6,8 @@
  * Does NOT import any Node.js modules or server-only SDKs (@google/genai, fs, path).
  */
 
-import { AIConsultationReport } from '../types';
-import { analyzeCustomerSegmentAndSchedule } from './customerSegmentation';
+import { AIConsultationReport } from '../types.js';
+import { analyzeCustomerSegmentAndSchedule } from './customerSegmentation.js';
 
 export function generateClientConsultationReport(
   messages: Array<{ sender: string; text: string; timestamp?: string }>,

@@ -1,4 +1,4 @@
-import { LeadCategory, LeadScore } from '../types';
+import { LeadCategory, LeadScore } from '../types.js';
 
 export interface CustomerSegmentDetection {
   category: LeadCategory;

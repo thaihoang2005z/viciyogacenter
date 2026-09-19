@@ -7,8 +7,8 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { processChatConsultation } from '../src/services/aiAdvisorService';
-import { getViciConsultation } from '../src/data/viciAdvisor';
+import { processChatConsultation } from '../src/services/aiAdvisorService.js';
+import { getViciConsultation } from '../src/data/viciAdvisor.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Setup CORS headers for cross-origin or preview deployments
