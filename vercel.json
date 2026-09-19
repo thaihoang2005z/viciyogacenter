@@ -10,7 +10,7 @@
   "functions": {
     "api/**": {
       "maxDuration": 30,
-      "includeFiles": ["src/**", "data/**"]
+      "includeFiles": "src/**"
     }
   }
 }
