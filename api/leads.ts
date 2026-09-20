@@ -8,57 +8,7 @@
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-let leadsStore: any[] = [
-  {
-    id: 'VICI-LEAD-101',
-    createdAt: '2026-09-12 14:35',
-    name: 'Nguyễn Thị Mai Lan',
-    phone: '0912 345 678',
-    email: 'mailan.nguyen@gmail.com',
-    source: 'VICI AI Chatbot',
-    interest: 'Trị liệu Cơ - Vai - Cổ - Gáy',
-    category: 'THERAPY_INTEREST',
-    experience: 'Dưới 6 tháng',
-    goals: ['Giảm đau vai gáy', 'Cải thiện giấc ngủ', 'Chỉnh dáng ngồi văn phòng'],
-    preferredTime: 'Tối (17:45 - 19:00)',
-    preferredFormat: 'Trực tiếp tại Studio',
-    recommendedCourse: 'Scan Trị Liệu Cơ - Vai - Cổ - Gáy + Gói 3 Tháng',
-    leadScore: 'HOT',
-    status: 'New',
-    assignedTo: 'Master Mỹ Kiều',
-    conversationSummary: 'Khách hàng làm lập trình viên, đau mỏi bả vai và cổ nhiều tháng nay do ngồi máy tính liên tục.',
-    conversationHistory: [
-      { sender: 'user', text: 'Chào VICI, mình bị đau cổ vai gáy mấy tháng nay rất khó chịu, nhờ tư vấn giúp', time: '14:30' },
-      { sender: 'ai', text: 'Xin chào chị Mai Lan. VICI rất đồng cảm với tình trạng căng cứng cổ vai gáy của chị.', time: '14:31' }
-    ],
-    staffNotes: 'Khách có dấu hiệu mỏi cơ bả vai do ngồi máy tính nhiều. Đã đặt lịch sơ bộ chiều Thứ 3.',
-    nextAction: 'Gọi xác nhận lịch hẹn Scan 1-1 lúc 18:00 Thứ 3',
-    isSampleData: true
-  },
-  {
-    id: 'VICI-LEAD-102',
-    createdAt: '2026-09-12 11:20',
-    name: 'Trần Minh Quang',
-    phone: '0988 765 432',
-    email: 'quang.tran@techcorp.vn',
-    source: 'Website Form',
-    interest: 'Khóa Yoga Nâng Cao Ashtanga (10 chuyên đề)',
-    category: 'ADVANCED',
-    experience: 'Trên 1 năm',
-    goals: ['Chinh phục Handstand an toàn', 'Mở khớp hông và lưng trên'],
-    preferredTime: 'Chiều Thứ 3 - Thứ 5 (14:00 - 15:30)',
-    preferredFormat: 'Trực tiếp tại Studio',
-    recommendedCourse: 'Yoga Nâng Cao Ashtanga & Năng Lượng Cột Sống (10 buổi)',
-    leadScore: 'HOT',
-    status: 'Contacted',
-    assignedTo: 'Master Henry Phan',
-    conversationSummary: 'Đã tập Yoga được 2 năm, muốn theo học trực tiếp cùng Thầy Henry để căn chỉnh kỹ thuật.',
-    conversationHistory: [],
-    staffNotes: 'Đã gọi điện trao đổi, khách rất hào hứng với 10 chuyên đề của Thầy Henry.',
-    nextAction: 'Gửi thông tin xác nhận chuyển khoản và vị trí phòng tập Opal Boulevard',
-    isSampleData: true
-  }
-];
+let leadsStore: any[] = [];
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');

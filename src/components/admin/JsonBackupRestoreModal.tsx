@@ -45,50 +45,37 @@ export default function JsonBackupRestoreModal({
     setIsExporting(true);
     setStatusMessage(null);
     try {
-      // Try backend endpoint first
-      let backupPayload: any = null;
-      try {
-        const res = await fetch('/api/leads/backup');
-        if (res.ok) {
-          backupPayload = await res.json();
-        }
-      } catch (_) {
-        // Fallback to client state
-      }
-
-      if (!backupPayload || !Array.isArray(backupPayload.leads)) {
-        backupPayload = {
-          version: '2.0',
-          system: 'VICI Yoga Therapy CRM',
-          exportedAt: new Date().toISOString(),
-          totalLeads: leads.length,
-          leads: leads.map((l) => ({
-            id: l.id,
-            createdAt: l.createdAt,
-            name: l.name,
-            phone: l.phone,
-            email: l.email || '',
-            source: l.source,
-            interest: l.interest,
-            category: l.category,
-            experience: l.experience || '',
-            goals: l.goals || [],
-            preferredTime: l.preferredTime || '',
-            preferredFormat: l.preferredFormat || 'Trực tiếp tại Studio',
-            recommendedCourse: l.recommendedCourse || '',
-            leadScore: l.leadScore,
-            status: l.status,
-            assignedTo: l.assignedTo || 'Master Henry Phan',
-            conversationSummary: l.conversationSummary || '',
-            chatSummary: l.chatSummary || '',
-            aiReport: l.aiReport || undefined,
-            conversationHistory: l.conversationHistory || [],
-            staffNotes: l.staffNotes || '',
-            nextAction: l.nextAction || '',
-            isSampleData: l.isSampleData || false
-          }))
-        };
-      }
+      const backupPayload = {
+        version: '2.0',
+        system: 'VICI Yoga Therapy CRM',
+        exportedAt: new Date().toISOString(),
+        totalLeads: leads.length,
+        leads: leads.map((l) => ({
+          id: l.id,
+          createdAt: l.createdAt,
+          name: l.name,
+          phone: l.phone,
+          email: l.email || '',
+          source: l.source,
+          interest: l.interest,
+          category: l.category,
+          experience: l.experience || '',
+          goals: l.goals || [],
+          preferredTime: l.preferredTime || '',
+          preferredFormat: l.preferredFormat || 'Trực tiếp tại Studio',
+          recommendedCourse: l.recommendedCourse || '',
+          leadScore: l.leadScore,
+          status: l.status,
+          assignedTo: l.assignedTo || 'Master Henry Phan',
+          conversationSummary: l.conversationSummary || '',
+          chatSummary: l.chatSummary || '',
+          aiReport: l.aiReport || undefined,
+          conversationHistory: l.conversationHistory || [],
+          staffNotes: l.staffNotes || '',
+          nextAction: l.nextAction || '',
+          isSampleData: l.isSampleData || false
+        }))
+      };
 
       const jsonStr = JSON.stringify(backupPayload, null, 2);
       const blob = new Blob([jsonStr], { type: 'application/json' });
