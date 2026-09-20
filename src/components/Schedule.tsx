@@ -243,14 +243,14 @@ export default function Schedule({ onOpenRegister }: ScheduleProps) {
       {/* Modal View Full Schedule Image */}
       {showFullScheduleModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/75 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowFullScheduleModal(false);
             }
           }}
         >
-          <div className="bg-white max-w-4xl w-full rounded-3xl overflow-hidden shadow-2xl p-6 max-h-[90vh] flex flex-col">
+          <div className="bg-white max-w-4xl w-full rounded-3xl overflow-hidden shadow-2xl p-6 max-h-[85vh] my-auto flex flex-col animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
               <div>
                 <h3 className="text-lg font-bold text-gray-900">

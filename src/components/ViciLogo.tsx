@@ -1,4 +1,4 @@
-import regeneratedLogo from '../assets/images/regenerated_image_1789285483552.jpg';
+import regeneratedLogo from '../assets/images/vici_logo_emblem_1789883797274.jpg';
 
 interface ViciLogoProps {
   className?: string;

@@ -35,6 +35,7 @@ import {
   exportLeadsToCSV,
   getGoogleSheetWebhookUrl,
   deleteLeadFromGoogleSheet,
+  syncLeadToGoogleSheet,
 } from '../../services/googleSheetsService';
 import {
   subscribeToFirestoreLeads,
@@ -80,6 +81,19 @@ export default function AdminDashboard({ onClose, onLogout }: AdminDashboardProp
       setStaffNoteInput(selectedLead.staffNotes || '');
       setNextActionInput(selectedLead.nextAction || '');
     }
+  }, [selectedLead]);
+
+  // Scroll to top and lock body scroll when lead detail modal is open
+  useEffect(() => {
+    if (selectedLead) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [selectedLead]);
 
   // Fetch leads from backend
@@ -217,6 +231,7 @@ export default function AdminDashboard({ onClose, onLogout }: AdminDashboardProp
         if (selectedLead?.id === id) {
           setSelectedLead(data.lead);
         }
+        syncLeadToGoogleSheet(data.lead).catch((err) => console.warn('Google Sheet update sync error:', err));
       }
     } catch (err) {
       console.error('Update lead failed', err);
@@ -763,15 +778,15 @@ export default function AdminDashboard({ onClose, onLogout }: AdminDashboardProp
         {/* Lead Detail Drawer / Modal */}
         {selectedLead && (
           <div
-            className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in"
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200"
             onClick={(e) => {
               if (e.target === e.currentTarget) {
                 setSelectedLead(null);
               }
             }}
           >
-            <div className="bg-[#FFFDF8] w-full max-w-2xl rounded-3xl shadow-2xl border border-[#E8DFC8] overflow-hidden max-h-[90vh] flex flex-col">
-              {/* Drawer Header */}
+            <div className="bg-[#FFFDF8] w-full max-w-2xl rounded-3xl shadow-2xl border border-[#E8DFC8] overflow-hidden max-h-[85vh] flex flex-col animate-in zoom-in-95 duration-200">
+              {/* Modal Header */}
               <div className="p-6 bg-gradient-to-r from-[#FAF7F0] to-[#F4EADA] border-b border-[#E8DFC8] flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
@@ -809,10 +824,10 @@ export default function AdminDashboard({ onClose, onLogout }: AdminDashboardProp
                 </div>
               </div>
 
-              {/* Drawer Body */}
-              <div className="p-6 overflow-y-auto space-y-6 text-xs sm:text-sm text-[#4A4E44]">
+              {/* Modal Body - Single Column */}
+              <div className="p-6 overflow-y-auto space-y-5 text-xs sm:text-sm text-[#4A4E44]">
                 {/* Status & Assignment Row */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 rounded-2xl bg-[#F8F5EE] border border-[#E8DFC8]">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 rounded-2xl bg-[#F8F5EE] border border-[#E8DFC8]">
                   <div>
                     <label className="text-[11px] font-bold uppercase text-[#717769] block mb-1">
                       Trạng thái xử lý:
@@ -845,7 +860,7 @@ export default function AdminDashboard({ onClose, onLogout }: AdminDashboardProp
                     </div>
                   </div>
 
-                  <div className="col-span-2 sm:col-span-1">
+                  <div>
                     <label className="text-[11px] font-bold uppercase text-[#717769] block mb-1">
                       Phân khúc CRM:
                     </label>
@@ -867,7 +882,7 @@ export default function AdminDashboard({ onClose, onLogout }: AdminDashboardProp
                     </select>
                   </div>
 
-                  <div className="col-span-2 sm:col-span-1">
+                  <div className="col-span-1 sm:col-span-3">
                     <label className="text-[11px] font-bold uppercase text-[#717769] block mb-1">
                       Người phụ trách:
                     </label>
@@ -915,54 +930,15 @@ export default function AdminDashboard({ onClose, onLogout }: AdminDashboardProp
                   </div>
                 </div>
 
-                {/* AI Transcript & Conversation History if from chatbot */}
-                {(selectedLead.conversationHistory && selectedLead.conversationHistory.length > 0) ? (
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-bold text-xs uppercase tracking-wider text-[#8A6437] flex items-center gap-1.5">
-                        <MessageSquare className="w-3.5 h-3.5 text-[#D69A2D]" />
-                        <span>Toàn Văn Cuộc Trò Chuyện Với AI Agent ({selectedLead.conversationHistory.length} tin nhắn)</span>
-                      </h4>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">
-                        Đã Lưu CRM
-                      </span>
-                    </div>
-
-                    <div className="p-4 rounded-2xl bg-[#F8F5EE] border border-[#E8DFC8] max-h-72 overflow-y-auto space-y-3 font-sans">
-                      {selectedLead.conversationHistory.map((msg, idx) => (
-                        <div
-                          key={idx}
-                          className={`flex items-start gap-2 ${
-                            msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'
-                          }`}
-                        >
-                          <div
-                            className={`w-7 h-7 rounded-full flex items-center justify-center text-[11px] shrink-0 ${
-                              msg.sender === 'user'
-                                ? 'bg-[#8A6437] text-white'
-                                : 'bg-[#D69A2D] text-white'
-                            }`}
-                          >
-                            {msg.sender === 'user' ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
-                          </div>
-
-                          <div
-                            className={`max-w-[82%] p-3 rounded-2xl text-xs ${
-                              msg.sender === 'user'
-                                ? 'bg-[#252822] text-stone-100 rounded-tr-xs'
-                                : 'bg-white border border-[#E8DFC8] text-[#252822] shadow-2xs rounded-tl-xs'
-                            }`}
-                          >
-                            <div className="flex items-center justify-between gap-3 mb-1 text-[10px] opacity-70">
-                              <span className="font-bold">
-                                {msg.sender === 'user' ? selectedLead.name : 'VICI AI Advisor'}
-                              </span>
-                              {msg.time && <span>{msg.time}</span>}
-                            </div>
-                            <p className="whitespace-pre-wrap leading-relaxed">{msg.text}</p>
-                          </div>
-                        </div>
-                      ))}
+                {/* AI Clinical Assessment Report or Chat Summary */}
+                {selectedLead.aiReport?.fullSummaryText ? (
+                  <div className="p-4 rounded-2xl bg-[#FAF7F0] border border-[#E8DFC8] space-y-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#8A6437] flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-[#D69A2D]" />
+                      <span>Báo Cáo Đánh Giá Lâm Sàng & Phác Đồ AI</span>
+                    </span>
+                    <div className="p-3 rounded-xl bg-white border border-[#E8DFC8] text-xs leading-relaxed max-h-48 overflow-y-auto whitespace-pre-wrap font-sans text-[#4A4E44]">
+                      {selectedLead.aiReport.fullSummaryText}
                     </div>
                   </div>
                 ) : selectedLead.chatSummary ? (
@@ -977,55 +953,16 @@ export default function AdminDashboard({ onClose, onLogout }: AdminDashboardProp
                   </div>
                 ) : null}
 
-                {/* AI Clinical Assessment Report if available */}
-                {selectedLead.aiReport && (
-                  <div className="p-3.5 rounded-2xl bg-[#FAF7F0] border border-[#E8DFC8] space-y-2.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#8A6437] flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-[#D69A2D]" />
-                        <span>Báo Cáo Đánh Giá Lâm Sàng & Phác Đồ AI</span>
-                      </span>
-                      <span className="text-[10px] font-mono text-gray-500">
-                        {selectedLead.aiReport.sessionId}
-                      </span>
-                    </div>
-
-                    {selectedLead.aiReport.detectedConditions?.length > 0 && (
-                      <div>
-                        <span className="text-[11px] font-semibold text-gray-600 block mb-1">
-                          Triệu chứng/Vấn đề nhận diện:
-                        </span>
-                        <div className="flex flex-wrap gap-1.5">
-                          {selectedLead.aiReport.detectedConditions.map((c, i) => (
-                            <span
-                              key={i}
-                              className="px-2 py-0.5 rounded-lg bg-amber-100/70 border border-amber-300/60 text-amber-900 text-[11px] font-semibold"
-                            >
-                              🩺 {c}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {selectedLead.aiReport.safetyNotes && (
-                      <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-950 text-xs">
-                        <strong>Lưu ý an toàn cho HLV:</strong> {selectedLead.aiReport.safetyNotes}
-                      </div>
-                    )}
-                  </div>
-                )}
-
                 {/* Staff Internal Notes & Next Action */}
-                <div className="space-y-3">
+                <div className="space-y-3 p-4 rounded-2xl bg-[#FAF7F0] border border-[#E8DFC8]">
                   <h4 className="font-bold text-xs uppercase tracking-wider text-[#252822] flex items-center gap-1.5">
                     <FileText className="w-3.5 h-3.5 text-[#8A6437]" />
                     <span>Ghi chú nội bộ & Hành động tiếp theo</span>
                   </h4>
 
                   <div>
-                    <label className="text-[11px] text-gray-500 block mb-1">
-                      Ghi chú chuyên môn (Tình trạng thoái hóa, tiền sử bệnh, cam kết):
+                    <label className="text-[11px] text-gray-600 block mb-1">
+                      Ghi chú chuyên môn:
                     </label>
                     <textarea
                       rows={3}
@@ -1037,19 +974,19 @@ export default function AdminDashboard({ onClose, onLogout }: AdminDashboardProp
                   </div>
 
                   <div>
-                    <label className="text-[11px] text-gray-500 block mb-1">
+                    <label className="text-[11px] text-gray-600 block mb-1">
                       Hành động tiếp theo (Next Action):
                     </label>
                     <input
                       type="text"
                       value={nextActionInput}
                       onChange={(e) => setNextActionInput(e.target.value)}
-                      placeholder="Ví dụ: Gọi điện lúc 14:00 ngày mai xác nhận lịch Scan..."
+                      placeholder="Ví dụ: Gọi điện lúc 14:00..."
                       className="w-full p-2.5 text-xs rounded-xl bg-white border border-[#D5C7AA] outline-none focus:border-[#D69A2D]"
                     />
                   </div>
 
-                  <div className="flex justify-end">
+                  <div className="flex justify-end pt-1">
                     <button
                       disabled={isUpdatingStatus}
                       onClick={() =>
@@ -1058,16 +995,16 @@ export default function AdminDashboard({ onClose, onLogout }: AdminDashboardProp
                           nextAction: nextActionInput,
                         })
                       }
-                      className="px-4 py-2 rounded-xl bg-[#8A6437] text-white text-xs font-bold hover:bg-[#6F4E27] transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+                      className="px-4 py-2 rounded-xl bg-[#8A6437] text-white text-xs font-bold hover:bg-[#6F4E27] transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50 shadow-sm"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>{isUpdatingStatus ? 'Đang lưu...' : 'Lưu ghi chú nội bộ'}</span>
+                      <span>{isUpdatingStatus ? 'Đang lưu...' : 'Lưu ghi chú'}</span>
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* Drawer Footer */}
+              {/* Modal Footer */}
               <div className="p-4 bg-[#FAF7F0] border-t border-[#E8DFC8] flex items-center justify-between gap-3">
                 <a
                   href={`tel:${selectedLead.phone.replace(/\s/g, '')}`}

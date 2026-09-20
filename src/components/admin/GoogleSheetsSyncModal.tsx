@@ -301,14 +301,14 @@ export default function GoogleSheetsSyncModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           onClose();
         }
       }}
     >
-      <div className="bg-[#FFFDF8] w-full max-w-2xl rounded-3xl shadow-2xl border border-[#E8DFC8] overflow-hidden max-h-[92vh] flex flex-col">
+      <div className="bg-[#FFFDF8] w-full max-w-2xl rounded-3xl shadow-2xl border border-[#E8DFC8] overflow-hidden max-h-[85vh] my-auto flex flex-col animate-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="p-5 bg-gradient-to-r from-[#1B5E20] via-[#2E7D32] to-[#1B5E20] text-white flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-3">

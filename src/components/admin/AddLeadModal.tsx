@@ -177,12 +177,12 @@ export default function AddLeadModal({
 
   return (
     <div
-      className="fixed inset-0 z-70 flex items-center justify-center p-3 sm:p-4 bg-black/65 backdrop-blur-xs animate-in fade-in overflow-y-auto"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="bg-[#FFFDF8] w-full max-w-3xl rounded-3xl shadow-2xl border border-[#E8DFC8] overflow-hidden flex flex-col my-auto max-h-[92vh]">
+      <div className="bg-[#FFFDF8] w-full max-w-3xl rounded-3xl shadow-2xl border border-[#E8DFC8] overflow-hidden flex flex-col my-auto max-h-[85vh] animate-in zoom-in-95 duration-200">
         {/* Modal Header */}
         <div className="px-5 py-4 sm:px-6 sm:py-5 bg-gradient-to-r from-[#FAF7F0] via-[#F6EFE2] to-[#ECE3D0] border-b border-[#E8DFC8] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
